@@ -10,6 +10,9 @@ export default defineConfig({
     open: true,
     port: 3000,
   },
+  optimizeDeps: {
+    include: ['linked-dep']
+  },
   build: {
     commonjsOptions: {
       transformMixedEsModules: true

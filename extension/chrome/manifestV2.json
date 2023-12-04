@@ -1,0 +1,41 @@
+{
+  "author": "i-Nautilus",
+  "name": "Nautilus Wallet",
+  "description": "Web3 and SSI Wallet",
+  "version": "0.0.2",
+  "manifest_version": 2,
+  "icons": {
+    "16": "shell-light.svg",
+    "32": "shell-light.svg",
+    "48": "shell-light.svg",
+    "128": "shell-light.svg"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_idle",
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "browser_action": {
+    "default_title": "Nautilus Wallet",
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "web_accessible_resources": [
+    "index.html"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self' data:; worker-src 'self' data:"
+}

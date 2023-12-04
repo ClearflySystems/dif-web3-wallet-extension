@@ -60,14 +60,14 @@ const GeneratePresentation = async (vc: string, privkey: string): Promise<string
       'id': '1234',
       'input_descriptors': [
         {
-          id: '1-2-3-4',
+          id: '1234',
           constraints: {
             fields: [
               {
                 path: ['$.credentialSubject.name'],
                 filter: {
                   type: 'string',
-                  pattern: 'n'
+                  pattern: '.'
                 }
               }
             ]

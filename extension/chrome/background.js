@@ -30,7 +30,7 @@ if(chromeBrowser) {
     console.log(message);
 
     // Handle Messages from Wallet to SW
-    if (message.action === 'PRESENT_VP') {
+    if (message.action === 'PRESENT_VP' && onSelectResponder) {
       selectedCredential = message.data;
       onSelectResponder({
         action: 'RETURNED_VC',
