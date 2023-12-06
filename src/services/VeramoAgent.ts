@@ -12,11 +12,12 @@ import {
   Entities,
   KeyStore,
   DataStore,
+  DataStoreORM,
   DIDStore,
   PrivateKeyStore,
   migrations
 } from '@veramo/data-store'
-//import {createConnection, DataSource, DataSourceOptions} from "typeorm";
+import {dbConnection} from './DatabaseConnection';
 import {KeyManagementSystem, SecretBox} from '@veramo/kms-local';
 import {KeyManager} from "@veramo/key-manager";
 import {DIDManager} from '@veramo/did-manager';
@@ -29,48 +30,44 @@ import {getResolver as ethrDidResolver} from 'ethr-did-resolver';
 import {getResolver as webDidResolver} from 'web-did-resolver';
 import {getResolver as keyDidResolver} from 'key-did-resolver';
 
-const dbOptions:any = {
-  type: 'sqljs',
-  database: "test_veramo",
-  synchronize: false,
-  migrations,
-  migrationsRun: true,
-  logging: ['error', 'info', 'warn'],
-  entities: Entities,
+
+console.log(dbConnection);
+
+const initializeAgent = async () => {
+
+  const agent = createAgent<IDIDManager & IKeyManager & IDataStore & IDataStoreORM & IResolver & ICredentialPlugin>({
+    plugins: [
+      new KeyManager({
+        store: new KeyStore(dbConnection),
+        kms: {
+          local: new KeyManagementSystem(
+            new PrivateKeyStore(dbConnection, new SecretBox(import.meta.env.VITE_APP_KMS_SECRET_KEY))
+          ),
+        },
+      }),
+      new DIDManager({
+        store: new DIDStore(dbConnection),
+        defaultProvider: 'did:key',
+        providers: {
+          'did:key': new KeyDIDProvider({
+            defaultKms: 'local'
+          })
+        },
+      }),
+      new DataStore(dbConnection), // may not use in favour of ORM version
+      new DataStoreORM(dbConnection),
+      new DIDResolverPlugin({
+        //...ethrDidResolver({infuraProjectId: import.meta.env.VITE_APP_INFURA_API_KEY}),
+        ...webDidResolver(),
+        ...keyDidResolver()
+      }),
+
+      new SelectiveDisclosure(),
+      new CredentialPlugin()
+    ],
+  });
+
+  return agent;
 }
 
-//const dbConnection = new DataSource(dbOptions).initialize()
-
-
-export const agent = createAgent<IDIDManager & IKeyManager & IDataStore & IDataStoreORM & IResolver & ICredentialPlugin>({
-  plugins: [
-    /*
-    new KeyManager({
-      store: new KeyStore(dbConnection),
-      kms: {
-        local: new KeyManagementSystem(
-          new PrivateKeyStore(dbConnection, new SecretBox(import.meta.env.VITE_APP_KMS_SECRET_KEY))
-        ),
-      },
-    }),
-    new DIDManager({
-      store: new DIDStore(dbConnection),
-      defaultProvider: 'did:key',
-      providers: {
-        'did:key': new KeyDIDProvider({
-          defaultKms: 'local'
-        })
-      },
-    }),
-    new DataStore(dbConnection),
-     */
-    new DIDResolverPlugin({
-      //...ethrDidResolver({infuraProjectId: import.meta.env.VITE_APP_INFURA_API_KEY}),
-      ...webDidResolver(),
-      ...keyDidResolver()
-    }),
-
-    //new SelectiveDisclosure(),
-    //new CredentialPlugin()
-  ],
-});
+export const agent = initializeAgent();

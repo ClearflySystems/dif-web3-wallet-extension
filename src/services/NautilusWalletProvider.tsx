@@ -1,13 +1,16 @@
 import React, {useEffect, useState, useContext, createContext} from 'react';
 import { ethers, Wallet } from 'ethers';
 import {useEffectOnce} from "usehooks-ts";
-//import {agent} from "../services/VeramoAgent";
+import {useVeramo} from "@veramo-community/veramo-react";
+import {agent} from "../services/VeramoAgent";
 
 type Props = {
   children?: React.ReactNode
 };
 
 const NautilusWalletProvider: React.FC<Props> = ({ children }) => {
+
+  //const agents = useVeramo();
 
   /**
    * Get/Set wallet unlocked
@@ -57,6 +60,7 @@ const NautilusWalletProvider: React.FC<Props> = ({ children }) => {
    * TODO - allow these to be user definable instead of env vars explore using Veramo KeyManager
    */
   useEffectOnce(() => {
+    console.log( agent );
     async function setupEthProvider() {
       const provider = await new ethers.AlchemyProvider(
         'goerli',

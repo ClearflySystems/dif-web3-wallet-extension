@@ -5,7 +5,10 @@ The idea being an all in one WEB3 Identity solution for use in WEB2/WEB3 authent
 
 Using DIF (https://identity.foundation/) did-jwt VC components and Sphereon/PEX for Presentation Exchange of VerifiedCredentials.
 
-Exploring using Veramo Agent for Key Management and Credential Management with a view to implement TypeORM Browser SQLite DB for storage instead of localStorage.
+~~Exploring using Veramo Agent for Key Management and Credential Management with a view to implement TypeORM Browser SQLite DB for storage instead of localStorage.~~
+
+Added TypeORM/SQL JS storage and setup Local Veramo Agent which will eventually handle account/credential storage and searches for presentation exchange.
+
 
 Local React Build working.
 Browser Extension Build works up until Presentation Exchange where AVL is invoked by an external library to validated JSON.
