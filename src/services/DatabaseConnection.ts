@@ -1,7 +1,10 @@
 import initSqlJs, { Database } from 'sql.js';
 //import localforage from 'localforage';
 import {Entities, migrations} from "@veramo/data-store";
+import {CreateDatabaseBugFix} from '../migration_temp';
 import {DataSource} from "typeorm";
+
+const all_migrations = [CreateDatabaseBugFix].concat(migrations);
 
 /**
  * Setup Our Local Database for storage of Accounts/Credentials
@@ -29,7 +32,7 @@ const initializeDatabase = async () => {
     useLocalForage: true,
     location: 'browser',
     synchronize: false,
-    migrations,
+    all_migrations,
     migrationsRun: true,
     logging: ['error', 'info', 'warn'],
     entities: Entities
