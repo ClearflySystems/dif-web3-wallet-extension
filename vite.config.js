@@ -1,17 +1,30 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import viteTsconfigPaths from 'vite-tsconfig-paths'
-import browserslistToEsbuild from 'browserslist-to-esbuild'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import viteTsconfigPaths from 'vite-tsconfig-paths';
+import browserslistToEsbuild from 'browserslist-to-esbuild';
+import { esbuildDecorators } from '@anatine/esbuild-decorators';
 
 export default defineConfig({
   base: '',
-  plugins: [react(), viteTsconfigPaths()],
+  plugins: [
+    react(),
+    viteTsconfigPaths()
+  ],
   server: {
     open: true,
-    port: 3000,
+    port: 3001,
   },
+  //optimizeDeps: {
+  //  include: ['linked-dep']
+  //},
   optimizeDeps: {
-    include: ['linked-dep']
+    esbuildOptions: {
+      plugins: [
+        esbuildDecorators({
+          tsconfig: './tsconfig.json',
+        }),
+      ],
+    },
   },
   build: {
     commonjsOptions: {
