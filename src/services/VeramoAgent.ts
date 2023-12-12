@@ -9,13 +9,11 @@ import {
   ICredentialPlugin,
 } from '@veramo/core'
 import {
-  Entities,
   KeyStore,
   DataStore,
   DataStoreORM,
   DIDStore,
-  PrivateKeyStore,
-  migrations
+  PrivateKeyStore
 } from '@veramo/data-store'
 import {dbConnection} from './DatabaseConnection';
 import {KeyManagementSystem, SecretBox} from '@veramo/kms-local';
@@ -23,17 +21,19 @@ import {KeyManager} from "@veramo/key-manager";
 import {DIDManager} from '@veramo/did-manager';
 import {CredentialPlugin} from "@veramo/credential-w3c";
 import {SelectiveDisclosure} from '@veramo/selective-disclosure';
-import {EthrDIDProvider} from '@veramo/did-provider-ethr';
+//import {EthrDIDProvider} from '@veramo/did-provider-ethr';
 import {KeyDIDProvider} from '@veramo/did-provider-key';
-import {DIDResolverPlugin} from '@veramo/did-resolver';
-import {getResolver as ethrDidResolver} from 'ethr-did-resolver';
-import {getResolver as webDidResolver} from 'web-did-resolver';
-import {getResolver as keyDidResolver} from 'key-did-resolver';
+import {DIDResolverPlugin, getUniversalResolverFor} from '@veramo/did-resolver';
+//import {getResolver as ethrDidResolver} from 'ethr-did-resolver';
+//import {getResolver as webDidResolver} from '@veramo/did-resolver';
+//import {getResolver as keyDidResolver} from '@veramo/did-resolver';
 
 
 console.log(dbConnection);
 
 const initializeAgent = async () => {
+
+  const uniResolver = getUniversalResolverFor(['web', 'key', 'ethr'])
 
   const agent = createAgent<IDIDManager & IKeyManager & IDataStore & IDataStoreORM & IResolver & ICredentialPlugin>({
     plugins: [
@@ -58,8 +58,7 @@ const initializeAgent = async () => {
       new DataStoreORM(dbConnection),
       new DIDResolverPlugin({
         //...ethrDidResolver({infuraProjectId: import.meta.env.VITE_APP_INFURA_API_KEY}),
-        ...webDidResolver(),
-        ...keyDidResolver()
+        ...uniResolver
       }),
 
       new SelectiveDisclosure(),
